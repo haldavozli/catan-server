@@ -5,7 +5,13 @@ var path = require('path');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 3000;
+
 const ServerHelper = require('./server-helper.js');
+const CronJob = require('cron').CronJob;
+const serverHelper = new ServerHelper(CronJob);
+
+const debugMode = Array.from(process.argv.map( (arg)=>arg.trim().toLowerCase() )).includes("debug");
+const LOGGER = require("./javascript/modules/logger")(debugMode);
 
 server.listen(port, () => {
   console.log('Server listening at port %d', port);
