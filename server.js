@@ -12,6 +12,34 @@ server.listen(port, () => {
 
 // Routing
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('', function(request, response) {
+    response.sendFile(__dirname + '/views/index.html');
+});
+
+app.get('/learn', function(request, response) {
+    response.sendFile(__dirname + '/views/learn.html');
+});
+
+app.get('/faq', function(request, response) {
+    response.sendFile(__dirname + '/views/faq.html');
+});
+
+app.get('/create', function(request, response) {
+    response.sendFile(__dirname + '/views/create_game.html');
+});
+
+app.get('/join', function(request, response) {
+    response.sendFile(__dirname + '/views/join_game.html');
+});
+
+app.get('/:code', function(request, response) {
+    response.sendFile(__dirname + '/views/game.html');
+});
+
+// Starts the server.
+server.listen(process.env.PORT || 5000, function() {
+    console.log('Starting server on port 5000');
+});
 
 // Chatroom
 
@@ -73,4 +101,28 @@ io.on('connection', (socket) => {
       });
     }
   });
+  
+  //server icin ekledigim kisim
+  socket.on('newGame', function(game, onSuccess) {
+        serverHelper.newGame(game, onSuccess);
+    });
+    socket.on('joinGame', function(playerInfo) {
+        serverHelper.joinGame(playerInfo, socket);
+    });
+    // send the game state to the client that requested it
+    socket.on('requestState', function(data) {
+        serverHelper.requestState(data, socket);
+    });
+    socket.on('startGame', function(gameData) {
+        serverHelper.startGame(gameData);
+    });
+    socket.on('pauseGame', function(code) {
+        serverHelper.pauseGame(code);
+    });
+    socket.on('resumeGame', function(code) {
+        serverHelper.resumeGame(code);
+    });
+    socket.on('killPlayer', function(id, code) {
+        serverHelper.killPlayer(id, code);
+    });
 });
